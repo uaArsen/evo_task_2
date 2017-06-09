@@ -39,6 +39,7 @@
             $('#hash-sha256').text("");
             $('#hash-md5').text("");
             $('#hash-sha1').text("");
+            $('#upload-number').text("Number of uploads: 0");
             $('#error').text("Error: File is to big, maximum allowed size is 10kb, size of your file is: " + size);
             return;
         }
@@ -53,6 +54,7 @@
             var sha256 = CryptoJS.SHA256(text).toString();
             var sha1 = CryptoJS.SHA1(text).toString();
 
+            $('#error').text("");
             $('#hash-sha256').text(" " + sha256);
             $('#hash-md5').text(" " + md5);
             $('#hash-sha1').text(" " + sha1);
