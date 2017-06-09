@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-md5.min.js.map"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-md5.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-md5.min.js"></script>-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js.map"></script>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EVO TASK 2</title>
+</head>
+<body>
+<h1> Upload your file </h1>
+<form id="holder" enctype="multipart/form-data" method="post">
+    <strong id="error"></strong>
+    <p><input type="file" id="fileInput">
+</form>
+{% include "app/number.html" %}
+<ul>
+    <li><h3>SHA256:<span id="hash-sha256"></span></h3></li>
+    <li><h3>MD5:<span id="hash-md5"></span></h3></li>
+    <li><h3>SHA1: <span id="hash-sha1"></span></h3></li>
+</ul>
+</body>
+<script>
+
+
+    $('#fileInput').on('change', $('fileInput'), function () {
+
+        var file = document.getElementById("fileInput").files[0];
+        var size = file.size;
+
+        if (size > 10000) {
+            $('#fileInput').val("");
+            $('#hash-sha256').text("");
+            $('#hash-md5').text("");
+            $('#hash-sha1').text("");
+            $('#error').text("Error: File is to big, maximum allowed size is 10kb, size of your file is: " + size);
+            return;
+        }
+        text = "";
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (evt) {
+            $("#fileInput").innerHTML = evt.target.result;
+            text = evt.target.result;
+
+            var md5 = CryptoJS.MD5(text).toString();
+            var sha256 = CryptoJS.SHA256(text).toString();
+            var sha1 = CryptoJS.SHA1(text).toString();
+
+            $('#hash-sha256').text(" " + sha256);
+            $('#hash-md5').text(" " + md5);
+            $('#hash-sha1').text(" " + sha1);
+            ajaxRequest(sha256);
+            return;
+        }
+    });
+    function ajaxRequest(sha256) {
+        $.ajax({
+            type: "GET",
+            url: "/",
+            data: {
+                'sha': sha256
+            },
+            dataType: "html",
+            cache: false,
+            success: function (data) {
+                $("#upload-number").replaceWith(data);
+            }
+
+        });
+
+    }
+</script>
+</html>
